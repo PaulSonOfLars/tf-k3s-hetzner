@@ -1,0 +1,5 @@
+- op: add
+  path: /spec/alertmanagerConfigSelector
+  value:
+    matchLabels:
+      alertmanagerConfig: main

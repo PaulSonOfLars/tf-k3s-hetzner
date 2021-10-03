@@ -1,0 +1,23 @@
+#namespace: cert-manager
+resources:
+  - https://github.com/jetstack/cert-manager/releases/download/v1.2.0/cert-manager.yaml
+  - cluster-issuer.yaml
+
+# BUG: this is needed, or the injector fails with an x509 error
+# https://github.com/jetstack/cert-manager/issues/3338
+patches:
+  - target:
+      kind: ClusterRole
+      name: cert-manager-cainjector
+    patch: |-
+      - op: add
+        path: /rules/-
+        value:
+          apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - create
+          - update

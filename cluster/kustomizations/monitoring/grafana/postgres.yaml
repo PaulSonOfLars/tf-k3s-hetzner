@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: monitoring
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12.5-alpine
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          env:
+            - name: POSTGRES_DB
+              value: grafanadb
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-secret
+                  key: DATABASE_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-secret
+                  key: DATABASE_PASSWORD
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: grafana-postgres-volume
+              subPath: postgres
+      volumes:
+        - name: grafana-postgres-volume
+          persistentVolumeClaim:
+            claimName: grafana-postgres-volume
+  volumeClaimTemplates:
+    - metadata:
+        namespace: monitoring
+        name: grafana-postgres-volume
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: hcloud-volumes
+        resources:
+          requests:
+            storage: 10Gi
+  serviceName: grafana-postgres-service

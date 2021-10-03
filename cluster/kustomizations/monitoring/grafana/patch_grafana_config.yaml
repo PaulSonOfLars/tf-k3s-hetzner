@@ -1,0 +1,36 @@
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: GF_SERVER_DOMAIN
+    value: grafana.sonoflars.dev
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: GF_SERVER_ENFORCE_DOMAIN
+    value: "true"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: GF_SERVER_ROOT_URL
+    value: https://grafana.sonoflars.dev
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: GF_DATABASE_TYPE
+    value: "postgres"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: GF_DATABASE_HOST
+    value: "grafana-postgres-service.monitoring.svc.cluster.local:5432"
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: GF_DATABASE_NAME
+    value: "grafanadb"
+- op: add
+  path: /spec/template/spec/containers/0/envFrom
+  value:
+    - prefix: "GF_"
+      secretRef:
+        name: grafana-secret
